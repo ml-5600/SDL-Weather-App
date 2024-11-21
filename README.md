@@ -1,1 +1,1 @@
-# SDL-Weather-App
+# sdl_weather_app
