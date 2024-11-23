@@ -5,6 +5,9 @@ import sdl2
 import sdl2.ext
 
 class Forecast:
+    def __init__(self):
+        pass
+
     def get_zip_code():
         print("Enter a 5-digit ZIP code:")
         zip_code = input()
@@ -13,7 +16,7 @@ class Forecast:
             zip_code = input()
         return zip_code
 
-    def get_forecast():
+    def get_forecast(self):
         key = "cb8e807defef46ceb86f16b64365577b"
         geocoder = OpenCageGeocode(key)
         query = Forecast.get_zip_code()
@@ -32,14 +35,14 @@ class Forecast:
             forecast_response = requests.get(forecast_url)
 
         if forecast_response.status_code == 200:
-            forecast_data = forecast_response.json()
-            return forecast_data
+            forecast = forecast_response.json()
+            return forecast
 
-    def display_forecast(forecast):
+    def display_forecast(self, forecast):
         pass
 
 def main():
-    forecast = Forecast
+    forecast = Forecast()
     forecast.display_forecast(forecast.get_forecast())
 
 if __name__ == "__main__" :
