@@ -3,7 +3,6 @@
 
 Run program:
 
-pip install -r requirements.txt
+```pip install -r requirements.txt```
 
-
-python sdl_weather_app.py
+```python sdl_weather_app.py```
