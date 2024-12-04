@@ -41,7 +41,20 @@ class Forecast:
         if forecast_response.status_code == 200:
             forecast = forecast_response.json()
             # Add the city and state to the forecast
-            forecast["city"] = results[0]["components"]["city"]
+            # Geocoder's location _type is not always "city"
+            forecast["city"] = ( 
+                results[0]["components"].get("city") or
+                results[0]["components"].get("_normalized_city") or
+                results[0]["components"].get("town") or
+                results[0]["components"].get("village") or
+                results[0]["components"].get("place") or
+                results[0]["components"].get("postal_city") or
+                results[0]["components"].get("hamlet") or
+                results[0]["components"].get("region") or
+                results[0]["components"].get("neighborhood") or
+                results[0]["components"].get("suburb") or
+                results[0]["components"].get("county") or
+                "Unknown")
             forecast["state"] = results[0]["components"]["state"] 
             return forecast
 
@@ -120,14 +133,12 @@ class Forecast:
         if (forecast["properties"]["periods"][0]["isDaytime"]):
             background_sprite = factory.from_image(RESOURCES.get_path("day.png"))                    
             color = (0, 0, 0)
-            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], 
-                fontmanager = font_manager, color = (0, 0, 0))
+            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager, color = (0, 0, 0))
 
         else:
             background_sprite = factory.from_image(RESOURCES.get_path("night.png"))
             color = (255, 255, 255)
-            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], 
-                fontmanager = font_manager, color = (255, 255, 255))
+            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager, color = (255, 255, 255))
 
         # Prepare sprites to be rendered
         weather_icon = self.get_weather_icon(forecast, factory, RESOURCES, font_path, color)
