@@ -140,13 +140,11 @@ class Forecast:
         current_temperature_sprite = factory.from_text(current_temperature_text, 
             fontmanager = font_manager_large, color = color)
         
-        precipitation_text = ["Chance of precipitation: " 
-            + str(forecast["properties"]["periods"][0]["probabilityOfPrecipitation"]["value"])]
+        precipitation_text = "Chance of precipitation: " + str(forecast["properties"]["periods"][0]["probabilityOfPrecipitation"]["value"])
         precipitation_sprite = factory.from_text(precipitation_text, 
             fontmanager = font_manager, color = color)
 
-        wind_speed_text = ["Wind speed: " 
-            + str(forecast["properties"]["periods"][0]["windSpeed"])]
+        wind_speed_text = "Wind speed: " + str(forecast["properties"]["periods"][0]["windSpeed"])
         wind_speed_sprite = factory.from_text(wind_speed_text, 
             fontmanager = font_manager, color = color)
 
