@@ -41,7 +41,21 @@ class Forecast:
         if forecast_response.status_code == 200:
             forecast = forecast_response.json()
             # Add the city and state to the forecast
-            forecast["city"] = results[0]["components"]["city"]
+            # Geocoder's location _type is not always "city"
+            forecast["city"] = ( 
+                results[0]["components"].get("city") or
+                results[0]["components"].get("_normalized_city") or
+                results[0]["components"].get("town") or
+                results[0]["components"].get("village") or
+                results[0]["components"].get("place") or
+                results[0]["components"].get("hamlet") or
+                results[0]["components"].get("postal_city") or
+                results[0]["components"].get("region") or
+                results[0]["components"].get("neighborhood") or
+                results[0]["components"].get("suburb") or
+                results[0]["components"].get("county") or
+                "Unknown"
+            )
             forecast["state"] = results[0]["components"]["state"] 
             return forecast
 
