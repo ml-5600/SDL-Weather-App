@@ -143,6 +143,7 @@ class Forecast:
 
         # Prepare sprites to be rendered
         weather_icon = self.get_weather_icon(forecast, factory, RESOURCES, font_path, color)
+        icon_width, icon_height = weather_icon.size
 
         current_temperature_text = str(forecast["properties"]["periods"][0]["temperature"])  + "°F"
         current_temperature_sprite = factory.from_text(current_temperature_text, 
@@ -158,9 +159,9 @@ class Forecast:
             fontmanager = font_manager, color = color)
 
         city_sprite = factory.from_text(forecast["city"] + ",", 
-            fontmanager = font_manager, color = color)
+            fontmanager = font_manager_small, color = color)
         state_sprite = factory.from_text(forecast["state"], 
-            fontmanager = font_manager, color = color)
+            fontmanager = font_manager_small, color = color)
 
         current_period = forecast["properties"]["periods"][0]["name"]
         current_period_sprite = factory.from_text(current_period, 
@@ -174,8 +175,8 @@ class Forecast:
         # Render the current weather conditions
         print(forecast["properties"]["periods"][0]["detailedForecast"])
         sprite_renderer.render(background_sprite)
-        sprite_renderer.render(city_sprite, 20, y - 360)
-        sprite_renderer.render(state_sprite, 20, y - 310)
+        sprite_renderer.render(city_sprite, 50, y - 360)
+        sprite_renderer.render(state_sprite, 50, y - 310)
         sprite_renderer.render(current_period_sprite, x - temperature_width // 2, y - 360)
         sprite_renderer.render(current_temperature_sprite, x - temperature_width // 2, y + 100)
         sprite_renderer.render(short_forecast, 50, y + 220)
@@ -184,7 +185,6 @@ class Forecast:
         if (self.isClear):
             sprite_renderer.render(weather_icon, x - icon_width // 2, y - 120)
         else:
-            icon_width, icon_height = weather_icon.size
             sprite_renderer.render(weather_icon, x - icon_width // 2, y - 370)
 
         # Play music file indefinitely
