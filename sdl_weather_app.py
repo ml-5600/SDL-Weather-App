@@ -60,22 +60,16 @@ class Forecast:
 
     def get_weather_icon(self, forecast, factory, RESOURCES, font_path, color):
         # Check which weather icon should be loaded
-        words_to_check = {"cloudy", "fog", "foggy", "overcast"}
-        if any(word in (forecast["properties"]["periods"][0]["detailedForecast"]).lower() 
-            for word in words_to_check):
-            weather_icon = factory.from_image(RESOURCES.get_path("cloudy.png"))
-            return weather_icon
-
         words_to_check = {"hail", "hailing"}
         if any(word in (forecast["properties"]["periods"][0]["detailedForecast"]).lower() 
             for word in words_to_check):
             weather_icon = factory.from_image(RESOURCES.get_path("hail.png"))
             return weather_icon
-
-        words_to_check = {"sunny", "sunshine"}
+            
+        words_to_check = {"snow", "snowy", "snowing"}
         if any(word in (forecast["properties"]["periods"][0]["detailedForecast"]).lower() 
             for word in words_to_check):
-            weather_icon = factory.from_image(RESOURCES.get_path("sunny.png"))
+            weather_icon = factory.from_image(RESOURCES.get_path("snow.png"))
             return weather_icon
         
         words_to_check = {"showers", "rain", "raining"}
@@ -83,11 +77,17 @@ class Forecast:
             for word in words_to_check):
             weather_icon = factory.from_image(RESOURCES.get_path("showers.png"))
             return weather_icon
-   
-        words_to_check = {"snow", "snowy", "snowing"}
+        
+        words_to_check = {"cloudy", "fog", "foggy", "overcast"}
         if any(word in (forecast["properties"]["periods"][0]["detailedForecast"]).lower() 
             for word in words_to_check):
-            weather_icon = factory.from_image(RESOURCES.get_path("snow.png"))
+            weather_icon = factory.from_image(RESOURCES.get_path("cloudy.png"))
+            return weather_icon
+
+        words_to_check = {"sunny", "sunshine"}
+        if any(word in (forecast["properties"]["periods"][0]["detailedForecast"]).lower() 
+            for word in words_to_check):
+            weather_icon = factory.from_image(RESOURCES.get_path("sunny.png"))
             return weather_icon
 
         words_to_check = {"thunderstorm", "thunder"}
@@ -125,7 +125,8 @@ class Forecast:
         sprite_renderer = factory.create_sprite_render_system(window)
 
         # Create font managers and load resources
-        font_path = RESOURCES.get_path("Roboto-Regular.ttf")     
+        font_path = RESOURCES.get_path("Roboto-Regular.ttf")   
+        font_manager_small = sdl2.ext.FontManager(font_path, size = 32)
         font_manager = sdl2.ext.FontManager(font_path, size = 50)
         font_manager_large = sdl2.ext.FontManager(font_path, size = 100)
      
@@ -133,24 +134,21 @@ class Forecast:
         if (forecast["properties"]["periods"][0]["isDaytime"]):
             background_sprite = factory.from_image(RESOURCES.get_path("day.png"))                    
             color = (0, 0, 0)
-            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager, color = (0, 0, 0))
+            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager_small, color = (0, 0, 0))
 
         else:
             background_sprite = factory.from_image(RESOURCES.get_path("night.png"))
             color = (255, 255, 255)
-            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager, color = (255, 255, 255))
+            short_forecast = factory.from_text(forecast["properties"]["periods"][0]["shortForecast"], fontmanager = font_manager_small, color = (255, 255, 255))
 
         # Prepare sprites to be rendered
         weather_icon = self.get_weather_icon(forecast, factory, RESOURCES, font_path, color)
-        window_width, window_height = window.size
-        text_width, text_height = short_forecast.size
-        x = (window_width - text_width) // 2
-        y = (window_height - text_height) // 2
 
         current_temperature_text = str(forecast["properties"]["periods"][0]["temperature"])  + "°F"
         current_temperature_sprite = factory.from_text(current_temperature_text, 
             fontmanager = font_manager_large, color = color)
-        
+        temperature_width, temperature_height = current_temperature_sprite.size
+
         precipitation_text = "Chance of precipitation: " + str(forecast["properties"]["periods"][0]["probabilityOfPrecipitation"]["value"])
         precipitation_sprite = factory.from_text(precipitation_text, 
             fontmanager = font_manager, color = color)
@@ -167,20 +165,27 @@ class Forecast:
         current_period = forecast["properties"]["periods"][0]["name"]
         current_period_sprite = factory.from_text(current_period, 
             fontmanager = font_manager, color = color)
+        period_width, period_height = current_period_sprite.size
+
+        window_width, window_height = window.size
+        x = window_width // 2
+        y = window_height // 2
+
         # Render the current weather conditions
         print(forecast["properties"]["periods"][0]["detailedForecast"])
         sprite_renderer.render(background_sprite)
-        sprite_renderer.render(city_sprite, 20, y - 340)
-        sprite_renderer.render(state_sprite, 20, y - 290)
-        sprite_renderer.render(current_period_sprite, x, y - 340)
-        sprite_renderer.render(current_temperature_sprite, x, y + 100)
-        sprite_renderer.render(short_forecast, x, y + 210)
-        sprite_renderer.render(precipitation_sprite, x // 2, y + 260)
-        sprite_renderer.render(wind_speed_sprite, x // 2, y + 310)
+        sprite_renderer.render(city_sprite, 20, y - 360)
+        sprite_renderer.render(state_sprite, 20, y - 310)
+        sprite_renderer.render(current_period_sprite, x - temperature_width // 2, y - 360)
+        sprite_renderer.render(current_temperature_sprite, x - temperature_width // 2, y + 100)
+        sprite_renderer.render(short_forecast, 50, y + 220)
+        sprite_renderer.render(precipitation_sprite, 50, y + 260)
+        sprite_renderer.render(wind_speed_sprite, 50, y + 310)
         if (self.isClear):
-            sprite_renderer.render(weather_icon, x, y - 120)
+            sprite_renderer.render(weather_icon, x - icon_width // 2, y - 120)
         else:
-            sprite_renderer.render(weather_icon, x - 120, y - 370)
+            icon_width, icon_height = weather_icon.size
+            sprite_renderer.render(weather_icon, x - icon_width // 2, y - 370)
 
         # Play music file indefinitely
         sdl2.sdlmixer.Mix_OpenAudio(44100, sdl2.sdlmixer.MIX_DEFAULT_FORMAT, 2, 2048)
