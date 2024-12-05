@@ -1,5 +1,6 @@
 # sdl_weather_app
-![sample_image](https://github.com/user-attachments/assets/ecde15a8-9dfd-4991-889e-68352484e7e0)
+
+![sample_image](https://github.com/user-attachments/assets/0806a413-2cde-4858-9122-df706d650ff7)
 
 
 Run program:
